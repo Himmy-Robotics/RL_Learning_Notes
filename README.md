@@ -3,7 +3,7 @@
 强化学习数学原理笔记。
 
 - Online: https://himmy-robotics.github.io/RL_Learning_Notes/
-- Source note: 强化学习的数学原理.md
+- Source note: RL_Learning_Notes.md
 - Site generator: MkDocs Material
 
 ## Local preview

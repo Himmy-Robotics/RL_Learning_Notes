@@ -2,4 +2,4 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cp "$ROOT_DIR/强化学习的数学原理.md" "$ROOT_DIR/docs/index.md"
+cp "$ROOT_DIR/RL_Learning_Notes.md" "$ROOT_DIR/docs/index.md"

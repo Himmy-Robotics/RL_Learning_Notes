@@ -51,19 +51,19 @@ $$
 1. 展开 $Q$ 的定义：$q_\pi(s, a) = \mathbb{E}_\pi[R_{t+1} + \gamma G_{t+1} \mid S_t = s, A_t = a]$
 2. **引入全期望公式**（按照下一步所有可能的环境转移 $s'$ 和 $r$ 进行展开）：
 
-   $$
-   q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma \mathbb{E}_\pi[G_{t+1} \mid S_t=s, A_t=a, R_{t+1}=r, S_{t+1}=s'] \right]
-   $$
+$$
+q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma \mathbb{E}_\pi[G_{t+1} \mid S_t=s, A_t=a, R_{t+1}=r, S_{t+1}=s'] \right]
+$$
 3. **引入马尔可夫性**（未来仅依赖当前状态 $s'$，与过去的历史无关）：
 
-   $$
-   q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma \mathbb{E}_\pi[G_{t+1} \mid S_{t+1}=s'] \right]
-   $$
+$$
+q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma \mathbb{E}_\pi[G_{t+1} \mid S_{t+1}=s'] \right]
+$$
 4. **代回** **$V$** **的定义**（$\mathbb{E}_\pi[G_{t+1} \mid S_{t+1}=s'] = v_\pi(s')$）：
 
-   $$
-   q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \big[ r + \gamma v_\pi(s') \big]
-   $$
+$$
+q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \big[ r + \gamma v_\pi(s') \big]
+$$
 
 ---
 
@@ -110,7 +110,7 @@ $q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \big[ r + \gamma v_\pi(s') \big]$
 
 在实际交互中，Agent 在状态 $s_t$ 下采样一个动作 $a_t$，环境反馈 $r_{t+1}$ 和 $s_{t+1}$。此时，产生的值 **$r_{t+1} + \gamma v(s_{t+1})$** **的物理意义是：**
 
-1.  **$q_\pi(s_t, a_t)$** **剥离了“环境概率”的一次采样**
+1. **$q_\pi(s_t, a_t)$** **剥离了“环境概率”的一次采样**
 2. **$v_\pi(s_t)$** **剥离了“策略动作概率”和”环境概率”的一次采样**
 
 💡由于它只是一次采样，不能直接与期望值划等号（即 $v(s_t) \neq r_{t+1} + \gamma v(s_{t+1})$或$q(s_t,a_t) \neq r_{t+1} + \gamma v(s_{t+1})$）。要让采样逼近期望，必须引入**大数定律**与 **Robbins-Monro (RM) 随机近似算法**。

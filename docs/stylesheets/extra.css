@@ -1,0 +1,22 @@
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6 {
+  font-weight: 700;
+}
+
+u,
+.chapter-intro {
+  text-decoration: underline;
+  text-decoration-skip-ink: none;
+}
+
+u mjx-container,
+u .MathJax,
+.chapter-intro mjx-container,
+.chapter-intro .MathJax {
+  text-decoration: underline;
+  text-decoration-skip-ink: none;
+}

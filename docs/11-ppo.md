@@ -116,155 +116,155 @@ $$
 
 1. **定义：**
 
-**概率比率：**
+	**概率比率：**
 
-$$
-r_t(\theta)=
-\frac{\pi(a_t|s_t,\theta)}
-{\pi(a_t|s_t,\theta_{old})}
-$$
+	$$
+	r_t(\theta)=
+	\frac{\pi(a_t|s_t,\theta)}
+	{\pi(a_t|s_t,\theta_{old})}
+	$$
 
-**优势函数**：
+	**优势函数**：
 
-$$
-\hat A_t
-$$
+	$$
+	\hat A_t
+	$$
 
 2. **Policy Loss：**
 
-**PPO-Clip 目标函数：**
+	**PPO-Clip 目标函数：**
 
-$$
-L^{CLIP}(\theta)
-=
-\mathbb{E}_t
-\left[
-\min
-\left(
-r_t(\theta)\hat A_t,\;
-\text{clip}(r_t(\theta),1-\epsilon,1+\epsilon)\hat A_t
-\right)
-\right]
-$$
+	$$
+	L^{CLIP}(\theta)
+	=
+	\mathbb{E}_t
+	\left[
+	\min
+	\left(
+	r_t(\theta)\hat A_t,\;
+		ext{clip}(r_t(\theta),1-\epsilon,1+\epsilon)\hat A_t
+	\right)
+	\right]
+	$$
 
-**Policy 梯度：**
+	**Policy 梯度：**
 
-由于$\pi(a_t|s_t,\theta_{old})$是常数，因此
+	由于$\pi(a_t|s_t,\theta_{old})$是常数，因此
 
-$$
-\nabla_\theta r_t(\theta)
-=
-r_t(\theta)
-\nabla_\theta
-\log \pi(a_t|s_t,\theta)
-$$
+	$$
+	\nabla_\theta r_t(\theta)
+	=
+	r_t(\theta)
+	\nabla_\theta
+	\log \pi(a_t|s_t,\theta)
+	$$
 
-因此：
+	因此：
 
-$$
-\nabla_\theta L^{CLIP}
-=
-\mathbb{E}_t
-\left[
-g_t
-\hat A_t
-\nabla_\theta
-\log \pi(a_t|s_t,\theta)
-\right]
-$$
+	$$
+	\nabla_\theta L^{CLIP}
+	=
+	\mathbb{E}_t
+	\left[
+	g_t
+	\hat A_t
+	\nabla_\theta
+	\log \pi(a_t|s_t,\theta)
+	\right]
+	$$
 
-其中：
+	其中：
 
-$$
-g_t=
-\begin{cases}
-r_t(\theta),
-& \text{if not clipped}
-\\
-0,
-& \text{if clipped}
-\end{cases}
-$$
+	$$
+	g_t=
+	\begin{cases}
+	r_t(\theta),
+	& \text{if not clipped}
+	\\
+	0,
+	& \text{if clipped}
+	\end{cases}
+	$$
 
 3. **Critic** **Loss：**
 
-**价值函数损失：**
+	**价值函数损失：**
 
-$$
-L^{critic}(\phi)
-=
-\mathbb{E}_t
-\left[
-(V(s_t,\phi)-\hat R_t)^2
-\right]
-$$
+	$$
+	L^{critic}(\phi)
+	=
+	\mathbb{E}_t
+	\left[
+	(V(s_t,\phi)-\hat R_t)^2
+	\right]
+	$$
 
-**Critic 梯度：**
+	**Critic 梯度：**
 
-$$
-\nabla_\phi L^{critic}
-=
-\mathbb{E}_t
-\left[
-2
-\big(
-V(s_t,\phi)-\hat R_t
-\big)
-\nabla_\phi
-V(s_t,\phi)
-\right]
-$$
+	$$
+	\nabla_\phi L^{critic}
+	=
+	\mathbb{E}_t
+	\left[
+	2
+	\big(
+	V(s_t,\phi)-\hat R_t
+	\big)
+	\nabla_\phi
+	V(s_t,\phi)
+	\right]
+	$$
 
 4. **Actor 加上 Entropy：**
 
-$$
-L^{actor}
-=
-L^{CLIP}
-+
-c_{ent}
-\mathbb{E}_t
-\left[
-H(\pi(\cdot|s_t))
-\right]
-$$
+	$$
+	L^{actor}
+	=
+	L^{CLIP}
+	+
+	c_{ent}
+	\mathbb{E}_t
+	\left[
+	H(\pi(\cdot|s_t))
+	\right]
+	$$
 
-**梯度：**
+	**梯度：**
 
-$$
-\nabla_\theta L^{actor}
-=
-\nabla_\theta L^{CLIP}
-+
-c_{ent}
-\nabla_\theta H(\pi)
-$$
+	$$
+	\nabla_\theta L^{actor}
+	=
+	\nabla_\theta L^{CLIP}
+	+
+	c_{ent}
+	\nabla_\theta H(\pi)
+	$$
 
 5. **最终参数更新：**
 
-**Actor：**
+	**Actor：**
 
-$$
-\theta
-\leftarrow
-\theta
-+
-\alpha_\theta
-\nabla_\theta
-L^{actor}
-$$
+	$$
+		heta
+	\leftarrow
+		heta
+	+
+	\alpha_\theta
+	\nabla_\theta
+	L^{actor}
+	$$
 
-**Critic：**
+	**Critic：**
 
-$$
-\phi
-\leftarrow
-\phi
--
-\alpha_\phi
-\nabla_\phi
-L^{critic}
-$$
+	$$
+	\phi
+	\leftarrow
+	\phi
+	-
+	\alpha_\phi
+	\nabla_\phi
+	L^{critic}
+	$$
 
 ‍
 

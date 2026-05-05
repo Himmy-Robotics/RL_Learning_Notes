@@ -82,19 +82,19 @@ $$
 1. 展开 $Q$ 的定义：$q_\pi(s, a) = \mathbb{E}_\pi[R_{t+1} + \gamma G_{t+1} \mid S_t = s, A_t = a]$
 2. **引入全期望公式**（按照下一步所有可能的环境转移 $s'$ 和 $r$ 进行展开）：
 
-   $$
-   q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma \mathbb{E}_\pi[G_{t+1} \mid S_t=s, A_t=a, R_{t+1}=r, S_{t+1}=s'] \right]
-   $$
+$$
+q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma \mathbb{E}_\pi[G_{t+1} \mid S_t=s, A_t=a, R_{t+1}=r, S_{t+1}=s'] \right]
+$$
 3. **引入马尔可夫性**（未来仅依赖当前状态 $s'$，与过去的历史无关）：
 
-   $$
-   q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma \mathbb{E}_\pi[G_{t+1} \mid S_{t+1}=s'] \right]
-   $$
+$$
+q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma \mathbb{E}_\pi[G_{t+1} \mid S_{t+1}=s'] \right]
+$$
 4. **代回** **$V$** **的定义**（$\mathbb{E}_\pi[G_{t+1} \mid S_{t+1}=s'] = v_\pi(s')$）：
 
-   $$
-   q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \big[ r + \gamma v_\pi(s') \big]
-   $$
+$$
+q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \big[ r + \gamma v_\pi(s') \big]
+$$
 
 ---
 
@@ -141,7 +141,7 @@ $q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \big[ r + \gamma v_\pi(s') \big]$
 
 在实际交互中，Agent 在状态 $s_t$ 下采样一个动作 $a_t$，环境反馈 $r_{t+1}$ 和 $s_{t+1}$。此时，产生的值 **$r_{t+1} + \gamma v(s_{t+1})$** **的物理意义是：**
 
-1.  **$q_\pi(s_t, a_t)$** **剥离了“环境概率”的一次采样**
+1. **$q_\pi(s_t, a_t)$** **剥离了“环境概率”的一次采样**
 2. **$v_\pi(s_t)$** **剥离了“策略动作概率”和”环境概率”的一次采样**
 
 💡由于它只是一次采样，不能直接与期望值划等号（即 $v(s_t) \neq r_{t+1} + \gamma v(s_{t+1})$或$q(s_t,a_t) \neq r_{t+1} + \gamma v(s_{t+1})$）。要让采样逼近期望，必须引入**大数定律**与 **Robbins-Monro (RM) 随机近似算法**。
@@ -788,23 +788,23 @@ $$
 
 **A2C 流程：**
 
-1. **Advantage（TD 误差）**  ：
+1. **Advantage（TD 误差）**：
 
-$$
-\delta_t = r_{t+1} + \gamma v(s_{t+1}, w_t) - v(s_t, w_t)
-$$
+	$$
+	\delta_t = r_{t+1} + \gamma v(s_{t+1}, w_t) - v(s_t, w_t)
+	$$
 
 2. **Actor 更新**：
 
-$$
-\theta_{t+1} = \theta_t + \alpha_\theta \delta_t \nabla_\theta \ln \pi(a_t | s_t, \theta_t)
-$$
+	$$
+		heta_{t+1} = \theta_t + \alpha_\theta \delta_t \nabla_\theta \ln \pi(a_t | s_t, \theta_t)
+	$$
 
 3. **Critic 更新**：
 
-$$
-w_{t+1} = w_t + \alpha_w \delta_t \nabla_w v(s_t, w_t)
-$$
+	$$
+	w_{t+1} = w_t + \alpha_w \delta_t \nabla_w v(s_t, w_t)
+	$$
 
 ​**优势**：只需维护一个价值网络 $v(s, w)$，不需要 $q$ 网络。策略 $\pi(\theta)$ 本身是随机的、探索性的，不需要 $\epsilon\text{-greedy}$。
 
@@ -1013,155 +1013,155 @@ $$
 
 1. **定义：**
 
-**概率比率：**
+	**概率比率：**
 
-$$
-r_t(\theta)=
-\frac{\pi(a_t|s_t,\theta)}
-{\pi(a_t|s_t,\theta_{old})}
-$$
+	$$
+	r_t(\theta)=
+	\frac{\pi(a_t|s_t,\theta)}
+	{\pi(a_t|s_t,\theta_{old})}
+	$$
 
-**优势函数**：
+	**优势函数**：
 
-$$
-\hat A_t
-$$
+	$$
+	\hat A_t
+	$$
 
 2. **Policy Loss：**
 
-**PPO-Clip 目标函数：**
+	**PPO-Clip 目标函数：**
 
-$$
-L^{CLIP}(\theta)
-=
-\mathbb{E}_t
-\left[
-\min
-\left(
-r_t(\theta)\hat A_t,\;
-\text{clip}(r_t(\theta),1-\epsilon,1+\epsilon)\hat A_t
-\right)
-\right]
-$$
+	$$
+	L^{CLIP}(\theta)
+	=
+	\mathbb{E}_t
+	\left[
+	\min
+	\left(
+	r_t(\theta)\hat A_t,\;
+		ext{clip}(r_t(\theta),1-\epsilon,1+\epsilon)\hat A_t
+	\right)
+	\right]
+	$$
 
-**Policy 梯度：**
+	**Policy 梯度：**
 
-由于$\pi(a_t|s_t,\theta_{old})$是常数，因此
+	由于$\pi(a_t|s_t,\theta_{old})$是常数，因此
 
-$$
-\nabla_\theta r_t(\theta)
-=
-r_t(\theta)
-\nabla_\theta
-\log \pi(a_t|s_t,\theta)
-$$
+	$$
+	\nabla_\theta r_t(\theta)
+	=
+	r_t(\theta)
+	\nabla_\theta
+	\log \pi(a_t|s_t,\theta)
+	$$
 
-因此：
+	因此：
 
-$$
-\nabla_\theta L^{CLIP}
-=
-\mathbb{E}_t
-\left[
-g_t
-\hat A_t
-\nabla_\theta
-\log \pi(a_t|s_t,\theta)
-\right]
-$$
+	$$
+	\nabla_\theta L^{CLIP}
+	=
+	\mathbb{E}_t
+	\left[
+	g_t
+	\hat A_t
+	\nabla_\theta
+	\log \pi(a_t|s_t,\theta)
+	\right]
+	$$
 
-其中：
+	其中：
 
-$$
-g_t=
-\begin{cases}
-r_t(\theta),
-& \text{if not clipped}
-\\
-0,
-& \text{if clipped}
-\end{cases}
-$$
+	$$
+	g_t=
+	\begin{cases}
+	r_t(\theta),
+	& \text{if not clipped}
+	\\
+	0,
+	& \text{if clipped}
+	\end{cases}
+	$$
 
 3. **Critic** **Loss：**
 
-**价值函数损失：**
+	**价值函数损失：**
 
-$$
-L^{critic}(\phi)
-=
-\mathbb{E}_t
-\left[
-(V(s_t,\phi)-\hat R_t)^2
-\right]
-$$
+	$$
+	L^{critic}(\phi)
+	=
+	\mathbb{E}_t
+	\left[
+	(V(s_t,\phi)-\hat R_t)^2
+	\right]
+	$$
 
-**Critic 梯度：**
+	**Critic 梯度：**
 
-$$
-\nabla_\phi L^{critic}
-=
-\mathbb{E}_t
-\left[
-2
-\big(
-V(s_t,\phi)-\hat R_t
-\big)
-\nabla_\phi
-V(s_t,\phi)
-\right]
-$$
+	$$
+	\nabla_\phi L^{critic}
+	=
+	\mathbb{E}_t
+	\left[
+	2
+	\big(
+	V(s_t,\phi)-\hat R_t
+	\big)
+	\nabla_\phi
+	V(s_t,\phi)
+	\right]
+	$$
 
 4. **Actor 加上 Entropy：**
 
-$$
-L^{actor}
-=
-L^{CLIP}
-+
-c_{ent}
-\mathbb{E}_t
-\left[
-H(\pi(\cdot|s_t))
-\right]
-$$
+	$$
+	L^{actor}
+	=
+	L^{CLIP}
+	+
+	c_{ent}
+	\mathbb{E}_t
+	\left[
+	H(\pi(\cdot|s_t))
+	\right]
+	$$
 
-**梯度：**
+	**梯度：**
 
-$$
-\nabla_\theta L^{actor}
-=
-\nabla_\theta L^{CLIP}
-+
-c_{ent}
-\nabla_\theta H(\pi)
-$$
+	$$
+	\nabla_\theta L^{actor}
+	=
+	\nabla_\theta L^{CLIP}
+	+
+	c_{ent}
+	\nabla_\theta H(\pi)
+	$$
 
 5. **最终参数更新：**
 
-**Actor：**
+	**Actor：**
 
-$$
-\theta
-\leftarrow
-\theta
-+
-\alpha_\theta
-\nabla_\theta
-L^{actor}
-$$
+	$$
+		heta
+	\leftarrow
+		heta
+	+
+	\alpha_\theta
+	\nabla_\theta
+	L^{actor}
+	$$
 
-**Critic：**
+	**Critic：**
 
-$$
-\phi
-\leftarrow
-\phi
--
-\alpha_\phi
-\nabla_\phi
-L^{critic}
-$$
+	$$
+	\phi
+	\leftarrow
+	\phi
+	-
+	\alpha_\phi
+	\nabla_\phi
+	L^{critic}
+	$$
 
 ‍
 

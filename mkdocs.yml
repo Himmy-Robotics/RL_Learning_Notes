@@ -28,6 +28,9 @@ markdown_extensions:
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
+extra_css:
+  - stylesheets/extra.css
+
 nav:
   - 首页: index.md
   - 1. Basic Concepts: 01-basic-concepts.md

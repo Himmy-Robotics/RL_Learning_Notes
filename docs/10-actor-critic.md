@@ -59,23 +59,23 @@ $$
 
 **A2C 流程：**
 
-1. **Advantage（TD 误差）**  ：
+1. **Advantage（TD 误差）**：
 
-$$
-\delta_t = r_{t+1} + \gamma v(s_{t+1}, w_t) - v(s_t, w_t)
-$$
+	$$
+	\delta_t = r_{t+1} + \gamma v(s_{t+1}, w_t) - v(s_t, w_t)
+	$$
 
 2. **Actor 更新**：
 
-$$
-\theta_{t+1} = \theta_t + \alpha_\theta \delta_t \nabla_\theta \ln \pi(a_t | s_t, \theta_t)
-$$
+	$$
+		heta_{t+1} = \theta_t + \alpha_\theta \delta_t \nabla_\theta \ln \pi(a_t | s_t, \theta_t)
+	$$
 
 3. **Critic 更新**：
 
-$$
-w_{t+1} = w_t + \alpha_w \delta_t \nabla_w v(s_t, w_t)
-$$
+	$$
+	w_{t+1} = w_t + \alpha_w \delta_t \nabla_w v(s_t, w_t)
+	$$
 
 ​**优势**：只需维护一个价值网络 $v(s, w)$，不需要 $q$ 网络。策略 $\pi(\theta)$ 本身是随机的、探索性的，不需要 $\epsilon\text{-greedy}$。
 

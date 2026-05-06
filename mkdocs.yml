@@ -18,6 +18,7 @@ plugins:
 
 markdown_extensions:
   - admonition
+  - meta
   - pymdownx.arithmatex:
       generic: true
   - pymdownx.superfences

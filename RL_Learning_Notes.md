@@ -85,11 +85,13 @@ $$
    $$
    q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma \mathbb{E}_\pi[G_{t+1} \mid S_t=s, A_t=a, R_{t+1}=r, S_{t+1}=s'] \right]
    $$
+
 3. **引入马尔可夫性**（未来仅依赖当前状态 $s'$，与过去的历史无关）：
 
    $$
    q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma \mathbb{E}_\pi[G_{t+1} \mid S_{t+1}=s'] \right]
    $$
+   
 4. **代回** **$V$** **的定义**（$\mathbb{E}_\pi[G_{t+1} \mid S_{t+1}=s'] = v_\pi(s')$）：
 
    $$

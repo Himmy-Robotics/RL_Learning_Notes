@@ -1,5 +1,5 @@
-site_name: RL Learning Notes
-site_description: Reinforcement learning math notes.
+site_name: 《强化学习的数学原理》学习总结笔记（包含PPO等补充内容）
+site_description: 《强化学习的数学原理》学习总结笔记（包含PPO等补充内容），强化学习数学原理、价值函数、贝尔曼方程、MC、TD、策略梯度、Actor-Critic、PPO。
 site_url: https://himmy-robotics.github.io/RL_Learning_Notes/
 repo_url: https://github.com/Himmy-Robotics/RL_Learning_Notes
 repo_name: Himmy-Robotics/RL_Learning_Notes

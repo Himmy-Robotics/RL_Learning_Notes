@@ -1,6 +1,6 @@
 # 11. PPO（Proximal Policy Optimization）
 
-本章介绍PPO，PPO要解决的问题说到底就是使用了重要性采样使得Policy Gradient由on-policy变为off-policy的时候，用于sample的policy的参数和agent的policy的参数不能相差太大，因此通过引入KL散度，为了让两个policy的参数尽可能接近，通过引入KL散度的方法的不同又可以分为TRPO，PPO-Penalty，PPO-Clip。
+<u>本章介绍PPO，PPO要解决的问题说到底就是使用了重要性采样使得Policy Gradient由on-policy变为off-policy的时候，用于sample的policy的参数和agent的policy的参数不能相差太大，因此通过引入KL散度，为了让两个policy的参数尽可能接近，通过引入KL散度的方法的不同又可以分为TRPO，PPO-Penalty，PPO-Clip。</u>
 
 ## 11.1. KL Divergence
 
@@ -34,25 +34,25 @@ $$
 
 1. **用TD方法求（A2C的做法）：**
 
-$$
-\hat{A}_t^{(1)} = \delta_t = r_{t+1} + \gamma v(s_{t+1}) - v(s_t)
-$$
+   $$
+   \hat{A}_t^{(1)} = \delta_t = r_{t+1} + \gamma v(s_{t+1}) - v(s_t)
+   $$
 
-**偏差大**，严重依赖当前价值函数 $v(s, w)$ 的准确性。如果 $v$ 估得不对，优势函数步步皆错。
+   **偏差大**，严重依赖当前价值函数 $v(s, w)$ 的准确性。如果 $v$ 估得不对，优势函数步步皆错。
 
 2. **用完整的MC回报：**
 
-$$
-\hat{A}_t^{(\infty)} = \left( \sum_{k=0}^{\infty} \gamma^k r_{t+k+1} \right) - v(s_t) = G_t - v(s_t)
-$$
+   $$
+   \hat{A}_t^{(\infty)} = \left( \sum_{k=0}^{\infty} \gamma^k r_{t+k+1} \right) - v(s_t) = G_t - v(s_t)
+   $$
 
-**方差高**，涉及整个 Episode 的所有随机变量，如果环境随机性大或 Episode 很长，方差会爆炸。
+   **方差高**，涉及整个 Episode 的所有随机变量，如果环境随机性大或 Episode 很长，方差会爆炸。
 
 3. **GAE方法：**
 
-$$
-\hat{A}_t^{GAE} = \delta_t + \gamma \lambda \delta_{t+1} + (\gamma \lambda)^2 \delta_{t+2} + \cdots = \sum_{l=0}^{\infty} (\gamma \lambda)^l \delta_{t+l}
-$$
+   $$
+   \hat{A}_t^{GAE} = \delta_t + \gamma \lambda \delta_{t+1} + (\gamma \lambda)^2 \delta_{t+2} + \cdots = \sum_{l=0}^{\infty} (\gamma \lambda)^l \delta_{t+l}
+   $$
 
 💡其意义在于保证优势的数值准确的同时稳定。
 

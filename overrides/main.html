@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+
+  {% set meta_title = config.site_name %}
+  {% set meta_description = config.site_description %}
+  {% set meta_keywords = none %}
+  {% set meta_author = config.site_author %}
+  {% set meta_url = config.site_url %}
+
+  {% if page %}
+    {% if page.meta and page.meta.title %}
+      {% set meta_title = page.meta.title %}
+    {% elif page.title %}
+      {% set meta_title = page.title %}
+    {% endif %}
+    {% if page.meta and page.meta.description %}
+      {% set meta_description = page.meta.description %}
+    {% endif %}
+    {% if page.meta and page.meta.keywords %}
+      {% set meta_keywords = page.meta.keywords %}
+    {% endif %}
+    {% if page.meta and page.meta.author %}
+      {% set meta_author = page.meta.author %}
+    {% endif %}
+    {% if page.canonical_url %}
+      {% set meta_url = page.canonical_url %}
+    {% endif %}
+  {% endif %}
+
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ config.site_name }}">
+  <meta property="og:title" content="{{ meta_title }}">
+  <meta property="og:description" content="{{ meta_description }}">
+  <meta property="og:url" content="{{ meta_url }}">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ meta_title }}">
+  <meta name="twitter:description" content="{{ meta_description }}">
+
+  {% if meta_keywords %}
+    <meta name="keywords" content="{{ meta_keywords }}">
+  {% endif %}
+  {% if meta_author %}
+    <meta name="author" content="{{ meta_author }}">
+  {% endif %}
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": {{ config.site_name | tojson }},
+      "url": {{ config.site_url | tojson }},
+      "description": {{ config.site_description | tojson }},
+      "inLanguage": "zh-CN",
+      "publisher": {
+        "@type": "Organization",
+        "name": {{ config.site_author | tojson }}
+      }
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": {{ meta_title | tojson }},
+      "url": {{ meta_url | tojson }},
+      "description": {{ meta_description | tojson }},
+      "inLanguage": "zh-CN",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": {{ config.site_name | tojson }},
+        "url": {{ config.site_url | tojson }}
+      }
+    }
+  </script>
+{% endblock %}

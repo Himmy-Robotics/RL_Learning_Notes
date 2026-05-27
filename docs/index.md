@@ -5,10 +5,6 @@ author: Himmy Robotics
 
 # 《强化学习的数学原理》学习总结笔记（包含PPO等补充内容）
 
-Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)
-
-> 《强化学习的数学原理》学习总结笔记（包含PPO等补充内容）
->
 > Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)
 
 这是一份面向自学与复习的强化学习数学原理的笔记，主要是笔者在阅读西湖大学赵世钰老师的《强化学习的数学原理》视频课程、书籍后的一些总结，以及一些自己的理解，同时也再次基础上补充了一些书中没有涉及到但对于机器人学习比较重要的内容，如PPO部分。在总结和补充的过程中难免会有些笔误或是理解上的错误，因此请读者见谅。如果觉得总结得不错，欢迎点个star鼓励一下。

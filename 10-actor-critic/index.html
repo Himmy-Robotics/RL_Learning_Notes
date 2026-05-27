@@ -1,0 +1,982 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="《强化学习的数学原理》学习总结笔记，聚焦强化学习数学推导，并补充 PPO、Actor-Critic、策略梯度等机器人学习相关内容。">
+      
+      
+        <meta name="author" content="Himmy Robotics">
+      
+      
+        <link rel="canonical" href="https://himmy-robotics.github.io/RL_Learning_Notes/10-actor-critic/">
+      
+      
+        <link rel="prev" href="../09-policy-gradient/">
+      
+      
+        <link rel="next" href="../11-ppo/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>10. Actor-Critic Methods - 《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+
+  
+  
+  
+  
+  
+
+  
+    
+      
+    
+    
+    
+    
+    
+      
+    
+  
+
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)">
+  <meta property="og:title" content="10. Actor-Critic Methods">
+  <meta property="og:description" content="《强化学习的数学原理》学习总结笔记，聚焦强化学习数学推导，并补充 PPO、Actor-Critic、策略梯度等机器人学习相关内容。">
+  <meta property="og:url" content="https://himmy-robotics.github.io/RL_Learning_Notes/10-actor-critic/">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="10. Actor-Critic Methods">
+  <meta name="twitter:description" content="《强化学习的数学原理》学习总结笔记，聚焦强化学习数学推导，并补充 PPO、Actor-Critic、策略梯度等机器人学习相关内容。">
+
+  
+  
+    <meta name="author" content="Himmy Robotics">
+  
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "\u300a\u5f3a\u5316\u5b66\u4e60\u7684\u6570\u5b66\u539f\u7406\u300b\u5b66\u4e60\u603b\u7ed3\u7b14\u8bb0\uff08\u5305\u542bPPO\u7b49\u8865\u5145\u5185\u5bb9\uff09 Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)",
+      "url": "https://himmy-robotics.github.io/RL_Learning_Notes/",
+      "description": "\u300a\u5f3a\u5316\u5b66\u4e60\u7684\u6570\u5b66\u539f\u7406\u300b\u5b66\u4e60\u603b\u7ed3\u7b14\u8bb0\uff0c\u805a\u7126\u5f3a\u5316\u5b66\u4e60\u6570\u5b66\u63a8\u5bfc\uff0c\u5e76\u8865\u5145 PPO\u3001Actor-Critic\u3001\u7b56\u7565\u68af\u5ea6\u7b49\u673a\u5668\u4eba\u5b66\u4e60\u76f8\u5173\u5185\u5bb9\u3002",
+      "inLanguage": "zh-CN",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Himmy Robotics"
+      }
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "10. Actor-Critic Methods",
+      "url": "https://himmy-robotics.github.io/RL_Learning_Notes/10-actor-critic/",
+      "description": "\u300a\u5f3a\u5316\u5b66\u4e60\u7684\u6570\u5b66\u539f\u7406\u300b\u5b66\u4e60\u603b\u7ed3\u7b14\u8bb0\uff0c\u805a\u7126\u5f3a\u5316\u5b66\u4e60\u6570\u5b66\u63a8\u5bfc\uff0c\u5e76\u8865\u5145 PPO\u3001Actor-Critic\u3001\u7b56\u7565\u68af\u5ea6\u7b49\u673a\u5668\u4eba\u5b66\u4e60\u76f8\u5173\u5185\u5bb9\u3002",
+      "inLanguage": "zh-CN",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "\u300a\u5f3a\u5316\u5b66\u4e60\u7684\u6570\u5b66\u539f\u7406\u300b\u5b66\u4e60\u603b\u7ed3\u7b14\u8bb0\uff08\u5305\u542bPPO\u7b49\u8865\u5145\u5185\u5bb9\uff09 Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)",
+        "url": "https://himmy-robotics.github.io/RL_Learning_Notes/"
+      }
+    }
+  </script>
+
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#10-actor-critic-methods" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)" class="md-header__button md-logo" aria-label="《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              10. Actor-Critic Methods
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Himmy-Robotics/RL_Learning_Notes" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Himmy-Robotics/RL_Learning_Notes
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)" class="md-nav__button md-logo" aria-label="《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Himmy-Robotics/RL_Learning_Notes" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Himmy-Robotics/RL_Learning_Notes
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-basic-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Basic Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-value-bellman/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. State-Value, Action-Value and Bellman Equation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-optimal-bellman/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Optimal State Values and Bellman Optimality Equation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-value-policy-iteration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Value Iteration and Policy Iteration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-monte-carlo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Monte Carlo Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-stochastic-approximation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Stochastic Approximation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-td-methods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Temporal-Difference Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-function-approximation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Value Function Approximation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-policy-gradient/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9. Policy Gradient Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10. Actor-Critic Methods
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10. Actor-Critic Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#101-qacq-value-actor-critic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1. QAC（Q value Actor-Critic）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#102-a2cadvantage-actor-critic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2. A2C（Advantage Actor-Critic）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#103-off-policy-actor-critic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3. Off-policy Actor-Critic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.3. Off-policy Actor-Critic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1031" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.1. 重要性采样：
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1032-off-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.2. Off-policy 策略梯度定理：
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1033-off-policy-actor-critic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3.3. Off-policy Actor-Critic 算法：
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#104-deterministic-actor-critic-dpgdeterministic-policy-gradient" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.4. Deterministic Actor-Critic (DPG——Deterministic Policy Gradient)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.4. Deterministic Actor-Critic (DPG——Deterministic Policy Gradient)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1041" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.4.1. 确定性策略：
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1042" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.4.2. 确定性策略梯度定理：
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1043-actor-criticdpg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.4.3. 确定性 Actor-Critic（DPG）：
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-ppo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11. PPO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="10-actor-critic-methods">10. Actor-Critic Methods<a class="headerlink" href="#10-actor-critic-methods" title="Permanent link">&para;</a></h1>
+<p><u>本章介绍Actor-Critic ，Actor-Critic 是 </u>​<strong><u>策略梯度 (policy-based) + 价值估计 (value-based)</u></strong>​<u>  的结合。第 9 章的 REINFORCE 用 MC 估计 </u>​<u><span class="arithmatex">\(q_\pi\)</span></u>​<u>（方差高），本章改用 TD 估计 </u>​<u><span class="arithmatex">\(q_\pi\)</span></u>​<u>（方差低），形成 Actor-Critic 框架。</u></p>
+<ul>
+<li><strong>Actor（演员）</strong>  ：策略网络 <span class="arithmatex">\(\pi(a|s, \theta)\)</span>，负责选动作，通过策略梯度更新 <span class="arithmatex">\(\theta\)</span>。</li>
+<li><strong>Critic（评论家）</strong>  ：价值网络 <span class="arithmatex">\(q(s, a, w)\)</span> 或 <span class="arithmatex">\(v(s, w)\)</span>，负责评估动作好坏，通过 TD 更新 <span class="arithmatex">\(w\)</span>。</li>
+</ul>
+<p>‍</p>
+<h2 id="101-qacq-value-actor-critic">10.1. QAC（Q value Actor-Critic）<a class="headerlink" href="#101-qacq-value-actor-critic" title="Permanent link">&para;</a></h2>
+<p>直接将 REINFORCE 中的 MC 估计替换为 TD 估计。</p>
+<p><strong>Actor 更新</strong>（策略梯度）：</p>
+<div class="arithmatex">\[
+\theta_{t+1} = \theta_t + \alpha_\theta \nabla_\theta \ln \pi(a_t | s_t, \theta_t) q(s_t, a_t, w_t)
+\]</div>
+<p>​<strong>Critic 更新</strong>（Sarsa + 函数近似）：</p>
+<div class="arithmatex">\[
+w_{t+1} = w_t + \alpha_w \left[ r_{t+1} + \gamma q(s_{t+1}, a_{t+1}, w_t) - q(s_t, a_t, w_t) \right] \nabla_w q(s_t, a_t, w_t)
+\]</div>
+<p>​<strong>核心思想</strong>：Critic 估计当前策略的动作价值，Actor 根据这个价值来改进策略。两者交替进行。</p>
+<hr />
+<h2 id="102-a2cadvantage-actor-critic">10.2. A2C（Advantage Actor-Critic）<a class="headerlink" href="#102-a2cadvantage-actor-critic" title="Permanent link">&para;</a></h2>
+<p><strong>基线不变性：</strong></p>
+<p>策略梯度对任意仅依赖状态的基线 <span class="arithmatex">\(b(S)\)</span> 不变：</p>
+<div class="arithmatex">\[
+\mathbb{E}[\nabla_\theta \ln \pi(A|S, \theta) q_\pi(S, A)] = \mathbb{E}[\nabla_\theta \ln \pi(A|S, \theta) (q_\pi(S, A) - b(S))]
+\]</div>
+<p>原因：<span class="arithmatex">\(\sum_a \nabla_\theta \pi(a|s, \theta) = \nabla_\theta \sum_a \pi(a|s, \theta) = \nabla_\theta 1 = 0\)</span></p>
+<p>虽然梯度的<strong>期望</strong>不变，但<strong>方差</strong>会变。选好的基线可以大幅降低方差。</p>
+<p><strong>优势函数：</strong></p>
+<p>选基线 <span class="arithmatex">\(b(s) = v_\pi(s)\)</span>，定义​<strong>优势函数</strong>：</p>
+<div class="arithmatex">\[
+\delta_\pi(s, a) = q_\pi(s, a) - v_\pi(s)
+\]</div>
+<p>含义：动作 <span class="arithmatex">\(a\)</span> 相对于平均水平的"优势"。<span class="arithmatex">\(\delta_\pi &gt; 0\)</span> 说明这个动作比平均好。</p>
+<p>实际中用 <strong>TD 误差</strong> 近似优势函数（只需一个 <span class="arithmatex">\(v\)</span> 网络，不需要 <span class="arithmatex">\(q\)</span> 网络）：</p>
+<div class="arithmatex">\[
+q_\pi(s_t, a_t) - v_\pi(s_t) \approx r_{t+1} + \gamma v(s_{t+1}, w_t) - v(s_t, w_t) = \delta_t
+\]</div>
+<p><strong>A2C 流程：</strong></p>
+<ol>
+<li>
+<p><strong>Advantage（TD 误差）</strong>：</p>
+<div class="arithmatex">\[
+\delta_t = r_{t+1} + \gamma v(s_{t+1}, w_t) - v(s_t, w_t)
+\]</div>
+</li>
+<li>
+<p><strong>Actor 更新</strong>：</p>
+<div class="arithmatex">\[
+    heta_{t+1} = \theta_t + \alpha_\theta \delta_t \nabla_\theta \ln \pi(a_t | s_t, \theta_t)
+\]</div>
+</li>
+<li>
+<p><strong>Critic 更新</strong>：</p>
+<div class="arithmatex">\[
+w_{t+1} = w_t + \alpha_w \delta_t \nabla_w v(s_t, w_t)
+\]</div>
+</li>
+</ol>
+<p>​<strong>优势</strong>：只需维护一个价值网络 <span class="arithmatex">\(v(s, w)\)</span>，不需要 <span class="arithmatex">\(q\)</span> 网络。策略 <span class="arithmatex">\(\pi(\theta)\)</span> 本身是随机的、探索性的，不需要 <span class="arithmatex">\(\epsilon\text{-greedy}\)</span>。</p>
+<hr />
+<h2 id="103-off-policy-actor-critic">10.3. Off-policy Actor-Critic<a class="headerlink" href="#103-off-policy-actor-critic" title="Permanent link">&para;</a></h2>
+<h3 id="1031">10.3.1. <strong>重要性采样：</strong><a class="headerlink" href="#1031" title="Permanent link">&para;</a></h3>
+<p>目标：用分布 <span class="arithmatex">\(p_1\)</span> 生成的样本来估计分布 <span class="arithmatex">\(p_0\)</span> 下的期望。</p>
+<div class="arithmatex">\[
+\mathbb{E}_{X \sim p_0}[X] = \mathbb{E}_{X \sim p_1} \left[ \frac{p_0(X)}{p_1(X)} X \right] \approx \frac{1}{n} \sum_{i=1}^{n} \frac{p_0(x_i)}{p_1(x_i)} x_i
+\]</div>
+<p>其中 <span class="arithmatex">\(\frac{p_0(x_i)}{p_1(x_i)}\)</span> 是<strong>重要性权重</strong>。</p>
+<h3 id="1032-off-policy">10.3.2. <strong>Off-policy 策略梯度定理：</strong><a class="headerlink" href="#1032-off-policy" title="Permanent link">&para;</a></h3>
+<p>用行为策略 <span class="arithmatex">\(\beta\)</span> 的样本来优化目标策略 <span class="arithmatex">\(\pi\)</span>：</p>
+<div class="arithmatex">\[
+\nabla_\theta J(\theta) = \mathbb{E}_{S \sim \rho, A \sim \beta} \left[ \frac{\pi(A|S, \theta)}{\beta(A|S)} \nabla_\theta \ln \pi(A|S, \theta) q_\pi(S, A) \right]
+\]</div>
+<p>与 on-policy 的区别：多了重要性权重 <span class="arithmatex">\(\frac{\pi}{\beta}\)</span>，动作从 <span class="arithmatex">\(\beta\)</span> 而非 <span class="arithmatex">\(\pi\)</span> 采样。</p>
+<p>💡<strong>我们使用的数据是由旧策略收集到的，而我们想要用这些数据来优化新策略，因此需要给旧策略得到的数据前面加一个权重，也就是重要性采样权重，这样旧策略获取到的数据就可以用于新策略的更新了。</strong></p>
+<h3 id="1033-off-policy-actor-critic">10.3.3. <strong>Off-policy Actor-Critic 算法：</strong><a class="headerlink" href="#1033-off-policy-actor-critic" title="Permanent link">&para;</a></h3>
+<p>在 A2C 的基础上，Actor 和 Critic 都乘以重要性权重：</p>
+<div class="arithmatex">\[
+\theta_{t+1} = \theta_t + \alpha_\theta \frac{\pi(a_t|s_t, \theta_t)}{\beta(a_t|s_t)} \delta_t \nabla_\theta \ln \pi(a_t | s_t, \theta_t)
+\]</div>
+<div class="arithmatex">\[
+w_{t+1} = w_t + \alpha_w \frac{\pi(a_t|s_t, \theta_t)}{\beta(a_t|s_t)} \delta_t \nabla_w v(s_t, w_t)
+\]</div>
+<hr />
+<h2 id="104-deterministic-actor-critic-dpgdeterministic-policy-gradient">10.4. Deterministic Actor-Critic (DPG——Deterministic Policy Gradient)<a class="headerlink" href="#104-deterministic-actor-critic-dpgdeterministic-policy-gradient" title="Permanent link">&para;</a></h2>
+<h3 id="1041">10.4.1. <strong>确定性策略：</strong><a class="headerlink" href="#1041" title="Permanent link">&para;</a></h3>
+<p>用 <span class="arithmatex">\(a = \mu(s, \theta)\)</span> 表示确定性策略（不是概率分布，直接输出动作）。</p>
+<h3 id="1042">10.4.2. <strong>确定性策略梯度定理：</strong><a class="headerlink" href="#1042" title="Permanent link">&para;</a></h3>
+<div class="arithmatex">\[
+\nabla_\theta J(\theta) = \mathbb{E}_{S \sim \eta} \left[ \nabla_\theta \mu(S) (\nabla_a q_\mu(S, a)) |_{a = \mu(S)} \right]
+\]</div>
+<p><strong>关键区别：</strong> 梯度中没有动作随机变量 <span class="arithmatex">\(A\)</span>，所以不需要对动作采样 <span class="arithmatex">\(\to\)</span> ​<strong>天然 off-policy</strong>。</p>
+<p><strong>直观含义：</strong></p>
+<ul>
+<li><strong><span class="arithmatex">\(\nabla_a q_\mu(s, a) |_{a = \mu(s)}\)</span></strong>：在当前动作处，<span class="arithmatex">\(q\)</span> 值关于动作的梯度方向（“动作应该往哪个方向调整能提高 <span class="arithmatex">\(q\)</span> 值”）。</li>
+<li><strong><span class="arithmatex">\(\nabla_\theta \mu(s)\)</span></strong>：参数 <span class="arithmatex">\(\theta\)</span> 往哪个方向变能改变动作输出。</li>
+</ul>
+<p>两者的链式组合告诉 <span class="arithmatex">\(\theta\)</span> 应该怎么更新。</p>
+<h3 id="1043-actor-criticdpg">10.4.3. <strong>确定性 Actor-Critic（DPG）：</strong><a class="headerlink" href="#1043-actor-criticdpg" title="Permanent link">&para;</a></h3>
+<p>​<strong>Actor</strong>：</p>
+<div class="arithmatex">\[
+\theta_{t+1} = \theta_t + \alpha_\theta \nabla_\theta \mu(s_t, \theta_t) (\nabla_a q(s_t, a, w_t)) |_{a = \mu(s_t)}
+\]</div>
+<p>​<strong>Critic</strong>（Sarsa-like，但用目标策略 <span class="arithmatex">\(\mu\)</span> 生成 <span class="arithmatex">\(\tilde{a}_{t+1}\)</span>）：</p>
+<div class="arithmatex">\[
+\delta_t = r_{t+1} + \gamma q(s_{t+1}, \mu(s_{t+1}, \theta_t), w_t) - q(s_t, a_t, w_t)
+\]</div>
+<div class="arithmatex">\[
+w_{t+1} = w_t + \alpha_w \delta_t \nabla_w q(s_t, a_t, w_t)
+\]</div>
+<p>💡<strong>Off-policy 但不需要重要性权重，</strong> 因为梯度中不涉及动作采样。行为策略 <span class="arithmatex">\(\beta\)</span> 可以是任意探索性策略。DDPG 是其深度学习版本。</p>
+<hr />
+<p>‍</p>
+<p>‍</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.top", "navigation.sections", "toc.integrate", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

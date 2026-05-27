@@ -1,0 +1,989 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="《强化学习的数学原理》学习总结笔记，聚焦强化学习数学推导，并补充 PPO、Actor-Critic、策略梯度等机器人学习相关内容。">
+      
+      
+        <meta name="author" content="Himmy Robotics">
+      
+      
+        <link rel="canonical" href="https://himmy-robotics.github.io/RL_Learning_Notes/02-value-bellman/">
+      
+      
+        <link rel="prev" href="../01-basic-concepts/">
+      
+      
+        <link rel="next" href="../03-optimal-bellman/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>2. State-Value, Action-Value and Bellman Equation - 《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+
+  
+  
+  
+  
+  
+
+  
+    
+      
+    
+    
+    
+    
+    
+      
+    
+  
+
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)">
+  <meta property="og:title" content="2. State-Value, Action-Value and Bellman Equation">
+  <meta property="og:description" content="《强化学习的数学原理》学习总结笔记，聚焦强化学习数学推导，并补充 PPO、Actor-Critic、策略梯度等机器人学习相关内容。">
+  <meta property="og:url" content="https://himmy-robotics.github.io/RL_Learning_Notes/02-value-bellman/">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="2. State-Value, Action-Value and Bellman Equation">
+  <meta name="twitter:description" content="《强化学习的数学原理》学习总结笔记，聚焦强化学习数学推导，并补充 PPO、Actor-Critic、策略梯度等机器人学习相关内容。">
+
+  
+  
+    <meta name="author" content="Himmy Robotics">
+  
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "\u300a\u5f3a\u5316\u5b66\u4e60\u7684\u6570\u5b66\u539f\u7406\u300b\u5b66\u4e60\u603b\u7ed3\u7b14\u8bb0\uff08\u5305\u542bPPO\u7b49\u8865\u5145\u5185\u5bb9\uff09 Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)",
+      "url": "https://himmy-robotics.github.io/RL_Learning_Notes/",
+      "description": "\u300a\u5f3a\u5316\u5b66\u4e60\u7684\u6570\u5b66\u539f\u7406\u300b\u5b66\u4e60\u603b\u7ed3\u7b14\u8bb0\uff0c\u805a\u7126\u5f3a\u5316\u5b66\u4e60\u6570\u5b66\u63a8\u5bfc\uff0c\u5e76\u8865\u5145 PPO\u3001Actor-Critic\u3001\u7b56\u7565\u68af\u5ea6\u7b49\u673a\u5668\u4eba\u5b66\u4e60\u76f8\u5173\u5185\u5bb9\u3002",
+      "inLanguage": "zh-CN",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Himmy Robotics"
+      }
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "2. State-Value, Action-Value and Bellman Equation",
+      "url": "https://himmy-robotics.github.io/RL_Learning_Notes/02-value-bellman/",
+      "description": "\u300a\u5f3a\u5316\u5b66\u4e60\u7684\u6570\u5b66\u539f\u7406\u300b\u5b66\u4e60\u603b\u7ed3\u7b14\u8bb0\uff0c\u805a\u7126\u5f3a\u5316\u5b66\u4e60\u6570\u5b66\u63a8\u5bfc\uff0c\u5e76\u8865\u5145 PPO\u3001Actor-Critic\u3001\u7b56\u7565\u68af\u5ea6\u7b49\u673a\u5668\u4eba\u5b66\u4e60\u76f8\u5173\u5185\u5bb9\u3002",
+      "inLanguage": "zh-CN",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "\u300a\u5f3a\u5316\u5b66\u4e60\u7684\u6570\u5b66\u539f\u7406\u300b\u5b66\u4e60\u603b\u7ed3\u7b14\u8bb0\uff08\u5305\u542bPPO\u7b49\u8865\u5145\u5185\u5bb9\uff09 Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)",
+        "url": "https://himmy-robotics.github.io/RL_Learning_Notes/"
+      }
+    }
+  </script>
+
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#2-state-value-action-value-and-bellman-equation" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)" class="md-header__button md-logo" aria-label="《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              2. State-Value, Action-Value and Bellman Equation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Himmy-Robotics/RL_Learning_Notes" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Himmy-Robotics/RL_Learning_Notes
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)" class="md-nav__button md-logo" aria-label="《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Himmy-Robotics/RL_Learning_Notes" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Himmy-Robotics/RL_Learning_Notes
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-basic-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Basic Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. State-Value, Action-Value and Bellman Equation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. State-Value, Action-Value and Bellman Equation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1. 核心定义
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.1. 核心定义">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#211-state-value-function-v_pis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1.1. 状态价值函数 (State-Value Function) \(v_\pi(s)\)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#212-action-value-function-q_pis-a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1.2. 动作价值函数 (Action-Value Function) \(q_\pi(s, a)\)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-v-q" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2. V 与 Q 的相互转化关系与推导
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2. V 与 Q 的相互转化关系与推导">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#221-q-v" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.1. 用 Q 表示 V (基于策略的期望)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#222-v-q" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.2. 用 V 表示 Q (基于环境的期望)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-bellman-expectation-equation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3. 贝尔曼期望方程 (Bellman Expectation Equation)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3. 贝尔曼期望方程 (Bellman Expectation Equation)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#231" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3.1. 状态价值的贝尔曼方程及其全展开
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#232" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3.2. 动作价值的贝尔曼方程及其全展开
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4. 核心洞察：剥离“双重期望”的单步采样
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#25-bellman-equation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5. 求解Bellman equation：
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-optimal-bellman/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Optimal State Values and Bellman Optimality Equation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-value-policy-iteration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Value Iteration and Policy Iteration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-monte-carlo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Monte Carlo Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-stochastic-approximation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6. Stochastic Approximation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-td-methods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7. Temporal-Difference Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-function-approximation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8. Value Function Approximation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-policy-gradient/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9. Policy Gradient Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-actor-critic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10. Actor-Critic Methods
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-ppo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11. PPO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="2-state-value-action-value-and-bellman-equation">2. State-Value, Action-Value and Bellman Equation<a class="headerlink" href="#2-state-value-action-value-and-bellman-equation" title="Permanent link">&para;</a></h1>
+<p><u>本章介绍强化学习中最重要的概念Value，强化学习的过程实际上就是在最大化Value，同时介绍贝尔曼公式。</u></p>
+<p>‍</p>
+<h2 id="21">2.1. 核心定义<a class="headerlink" href="#21" title="Permanent link">&para;</a></h2>
+<p>一切价值的本质都是未来奖励的累积。定义在时间步 <span class="arithmatex">\(t\)</span> 的<strong>折扣回报（Discounted Return）</strong>  为随机变量 <span class="arithmatex">\(G_t\)</span>：</p>
+<div class="arithmatex">\[
+G_t \doteq R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \dots = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}
+\]</div>
+<p>其中 <span class="arithmatex">\(\gamma \in [0, 1]\)</span> 是折扣因子。</p>
+<h3 id="211-state-value-function-v_pis">2.1.1.  状态价值函数 (State-Value Function) <span class="arithmatex">\(v_\pi(s)\)</span><a class="headerlink" href="#211-state-value-function-v_pis" title="Permanent link">&para;</a></h3>
+<p><strong>定义</strong>：在状态 <span class="arithmatex">\(s\)</span> 下，按照策略 <span class="arithmatex">\(\pi\)</span> 进行决策，所能获得的<strong>长期回报的数学期望</strong>。</p>
+<div class="arithmatex">\[
+v_\pi(s) \doteq \mathbb{E}_\pi [G_t \mid S_t = s]
+\]</div>
+<h3 id="212-action-value-function-q_pis-a">2.1.2.  动作价值函数 (Action-Value Function) <span class="arithmatex">\(q_\pi(s, a)\)</span><a class="headerlink" href="#212-action-value-function-q_pis-a" title="Permanent link">&para;</a></h3>
+<p><strong>定义</strong>：在状态 <span class="arithmatex">\(s\)</span> 下，<strong>强制执行动作</strong> <strong><span class="arithmatex">\(a\)</span></strong>，之后继续按照策略 <span class="arithmatex">\(\pi\)</span> 进行决策，所能获得的<strong>长期回报的数学期望</strong>。</p>
+<div class="arithmatex">\[
+q_\pi(s, a) \doteq \mathbb{E}_\pi[G_t \mid S_t = s, A_t = a]
+\]</div>
+<hr />
+<h2 id="22-v-q">2.2. V 与 Q 的相互转化关系与推导<a class="headerlink" href="#22-v-q" title="Permanent link">&para;</a></h2>
+<p>状态价值 <span class="arithmatex">\(V\)</span> 与动作价值 <span class="arithmatex">\(Q\)</span> 可以通过<strong>策略</strong> <strong><span class="arithmatex">\(\pi(a|s)\)</span></strong> 和<strong>环境转移概率</strong> <strong><span class="arithmatex">\(p(s', r \mid s, a)\)</span></strong> 相互转换。</p>
+<h3 id="221-q-v">2.2.1.  用 Q 表示 V (基于策略的期望)<a class="headerlink" href="#221-q-v" title="Permanent link">&para;</a></h3>
+<p>状态 <span class="arithmatex">\(s\)</span> 的整体价值，等于在该状态下所有可能动作的 <span class="arithmatex">\(Q\)</span> 值，按策略概率进行的<strong>加权平均</strong>：</p>
+<div class="arithmatex">\[
+v_\pi(s) = \sum_{a \in \mathcal{A}} \pi(a|s) q_\pi(s, a)
+\]</div>
+<h3 id="222-v-q">2.2.2.  用 V 表示 Q (基于环境的期望)<a class="headerlink" href="#222-v-q" title="Permanent link">&para;</a></h3>
+<p><strong>推导过程（利用全期望公式与马尔可夫性）：</strong></p>
+<ol>
+<li>展开 <span class="arithmatex">\(Q\)</span> 的定义：<span class="arithmatex">\(q_\pi(s, a) = \mathbb{E}_\pi[R_{t+1} + \gamma G_{t+1} \mid S_t = s, A_t = a]\)</span></li>
+<li>
+<p><strong>引入全期望公式</strong>（按照下一步所有可能的环境转移 <span class="arithmatex">\(s'\)</span> 和 <span class="arithmatex">\(r\)</span> 进行展开）：</p>
+<div class="arithmatex">\[
+q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma \mathbb{E}_\pi[G_{t+1} \mid S_t=s, A_t=a, R_{t+1}=r, S_{t+1}=s'] \right]
+\]</div>
+</li>
+<li>
+<p><strong>引入马尔可夫性</strong>（未来仅依赖当前状态 <span class="arithmatex">\(s'\)</span>，与过去的历史无关）：</p>
+<div class="arithmatex">\[
+q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma \mathbb{E}_\pi[G_{t+1} \mid S_{t+1}=s'] \right]
+\]</div>
+</li>
+<li>
+<p><strong>代回</strong> <strong><span class="arithmatex">\(V\)</span></strong> <strong>的定义</strong>（<span class="arithmatex">\(\mathbb{E}_\pi[G_{t+1} \mid S_{t+1}=s'] = v_\pi(s')\)</span>）：</p>
+<div class="arithmatex">\[
+q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \big[ r + \gamma v_\pi(s') \big]
+\]</div>
+</li>
+</ol>
+<hr />
+<h2 id="23-bellman-expectation-equation">2.3. 贝尔曼期望方程 (Bellman Expectation Equation)<a class="headerlink" href="#23-bellman-expectation-equation" title="Permanent link">&para;</a></h2>
+<p>贝尔曼方程的核心是<strong>递归</strong>，即当前价值等于即时奖励的期望加上下一时刻价值的折扣期望。</p>
+<h3 id="231">2.3.1.  状态价值的贝尔曼方程及其全展开<a class="headerlink" href="#231" title="Permanent link">&para;</a></h3>
+<div class="arithmatex">\[
+v_\pi(s) = \mathbb{E}_\pi[R_{t+1} + \gamma v_\pi(S_{t+1}) \mid S_t = s]
+\]</div>
+<p><strong>全展开形式（将</strong> <strong><span class="arithmatex">\(V \to Q \to V\)</span></strong> <strong>结合）：</strong></p>
+<div class="arithmatex">\[
+v_\pi(s) = \sum_{a} \pi(a|s) \sum_{s', r} p(s', r \mid s, a) \big[ r + \gamma v_\pi(s') \big]
+\]</div>
+<h3 id="232">2.3.2. 动作价值的贝尔曼方程及其全展开<a class="headerlink" href="#232" title="Permanent link">&para;</a></h3>
+<div class="arithmatex">\[
+q_\pi(s, a) = \mathbb{E}_\pi[R_{t+1} + \gamma q_\pi(S_{t+1}, A_{t+1}) \mid S_t = s, A_t = a]
+\]</div>
+<p><strong>全展开形式（将</strong> <strong><span class="arithmatex">\(Q \to V \to Q\)</span></strong> <strong>结合）：</strong></p>
+<div class="arithmatex">\[
+q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma \sum_{a'} \pi(a'|s') q_\pi(s', a') \right]
+\]</div>
+<hr />
+<h2 id="24">2.4. 核心洞察：剥离“双重期望”的单步采样<a class="headerlink" href="#24" title="Permanent link">&para;</a></h2>
+<p><span class="arithmatex">\(v_\pi(s) = \sum_{a} \pi(a|s) \sum_{s', r} p(s', r \mid s, a) \big[ r + \gamma v_\pi(s') \big]\)</span></p>
+<p><span class="arithmatex">\(q_\pi(s, a) = \sum_{s', r} p(s', r \mid s, a) \big[ r + \gamma v_\pi(s') \big]\)</span></p>
+<p>其中：</p>
+<ol>
+<li><strong>策略的期望</strong>：<span class="arithmatex">\(\sum_a \pi(a|s)\)</span> （智能体抛骰子选动作）</li>
+<li><strong>环境的期望</strong>：<span class="arithmatex">\(\sum_{s',r} p(s',r|s,a)\)</span> （环境抛骰子给反馈）</li>
+</ol>
+<p>在实际交互中，Agent 在状态 <span class="arithmatex">\(s_t\)</span> 下采样一个动作 <span class="arithmatex">\(a_t\)</span>，环境反馈 <span class="arithmatex">\(r_{t+1}\)</span> 和 <span class="arithmatex">\(s_{t+1}\)</span>。此时，产生的值 <strong><span class="arithmatex">\(r_{t+1} + \gamma v(s_{t+1})\)</span></strong> <strong>的物理意义是：</strong></p>
+<ol>
+<li><strong><span class="arithmatex">\(q_\pi(s_t, a_t)\)</span></strong> <strong>剥离了“环境概率”的一次采样</strong></li>
+<li><strong><span class="arithmatex">\(v_\pi(s_t)\)</span></strong> <strong>剥离了“策略动作概率”和”环境概率”的一次采样</strong></li>
+</ol>
+<p>💡由于它只是一次采样，不能直接与期望值划等号（即 <span class="arithmatex">\(v(s_t) \neq r_{t+1} + \gamma v(s_{t+1})\)</span>或<span class="arithmatex">\(q(s_t,a_t) \neq r_{t+1} + \gamma v(s_{t+1})\)</span>）。要让采样逼近期望，必须引入<strong>大数定律</strong>与 <strong>Robbins-Monro (RM) 随机近似算法</strong>。</p>
+<hr />
+<h2 id="25-bellman-equation">2.5. <strong>求解Bellman equation</strong>：<a class="headerlink" href="#25-bellman-equation" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>解析解：</strong></li>
+</ul>
+<div class="arithmatex">\[
+v_\pi=(I-\gamma P_\pi)^{-1}r_\pi.
+\]</div>
+<ul>
+<li><strong>数值解：</strong></li>
+</ul>
+<div class="arithmatex">\[
+v_{k+1}=r_\pi+\gamma P_\pi v_k,\quad k=0,1,2,...
+\]</div>
+<div class="arithmatex">\[
+v_k\to v_\pi=(I-\gamma P_\pi)^{-1}r_\pi,\quad\text{随着}k\to\infty.
+\]</div>
+<p>‍</p>
+<p>‍</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.top", "navigation.sections", "toc.integrate", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

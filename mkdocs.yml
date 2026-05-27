@@ -1,4 +1,4 @@
-site_name: RL Learning Notes
+site_name: "《强化学习的数学原理》学习总结笔记（包含PPO等补充内容） Mathematical Foundations of Reinforcement Learning: Study Notes (with PPO Supplements)"
 site_description: 《强化学习的数学原理》学习总结笔记，聚焦强化学习数学推导，并补充 PPO、Actor-Critic、策略梯度等机器人学习相关内容。
 site_author: Himmy Robotics
 site_url: https://himmy-robotics.github.io/RL_Learning_Notes/
